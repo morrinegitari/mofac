@@ -56,8 +56,8 @@ class Contacts(models.Model):
 
     def __str__(self):
         return self.name
-    #mpesa api
-    class Transaction(models.Model):
+#mpesa api
+class Transaction(models.Model):
         phone_number = models.CharField(max_length=15)
         amount = models.DecimalField(max_digits=10, decimal_places=2)
         transaction_id = models.CharField(max_length=100, unique=True)
@@ -66,3 +66,18 @@ class Contacts(models.Model):
 
         def __str__(self):
             return f"{self.phone_number} - {self.amount} - {self.status}"
+
+
+class Admission1(models.Model):
+    firstname =models.CharField(max_length =50)
+    lastname =models.CharField(max_length =50)
+    email =models.EmailField()
+    date =models.DateField()
+    gender= models.CharField(max_length=50)
+    address= models.CharField(max_length=50)
+    phone= models.CharField(max_length=50)
+    image = models.ImageField(upload_to='students/')  # New field
+
+
+    def __str__(self):
+        return self.firstname

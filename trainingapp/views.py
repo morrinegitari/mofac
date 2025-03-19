@@ -1,15 +1,18 @@
 import json
 
 from django.contrib import messages
+from django.contrib.admin import AdminSite
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.sites import requests
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from requests.auth import HTTPBasicAuth
 
 from trainingapp.credentials import MpesaAccessToken, LipanaMpesaPpassword
-from trainingapp.models import Contacts
+from trainingapp.models import *
 
 
 # Create your views here.
@@ -201,4 +204,40 @@ def stk(request):
 def transactions_list(request):
     transactions = Transaction.objects.all().order_by('-date')
     return render(request, 'transactions.html', {'transactions': transactions})
+
+
+def admission(request):
+    if request.method == 'POST':
+        image = request.FILES.get('image')
+
+        if image:  # Log file upload
+            print(f"Uploaded File Name: {image.name}")
+            print(f"File Size: {image.size} bytes")
+
+            # Optional: Save to disk manually (debugging)
+            path = default_storage.save(f"appointments/{image.name}", ContentFile(image.read()))
+            print(f"File saved at: {path}")
+
+        myadmission = Admission1(
+             firstname=request.POST['firstname'],
+             lastname=request.POST['lastname'],
+            email=request.POST['email'],
+            date=request.POST['date'],
+            gender=request.POST['gender'],
+            address=request.POST['address'],
+            phone=request.POST['phone'],
+            image=image  # Assign image
+
+        )
+        myadmission.save()
+        return redirect('/showstudents')
+
+    else:
+        return render(request, 'admission.html')
+
+
+def showstudents(request):
+    all1 = Admission1.objects.all()
+    return render(request,'showstudents.html',{'all1':all1})
+
 
